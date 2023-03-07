@@ -8,6 +8,7 @@ MainObject::MainObject()
     input_type.left = input_type.right = 0;
     input_type.down = input_type.up = 0;
     map_x = map_y = 0;
+    numOfBullet = 3;
 }
 
 void MainObject::Show(SDL_Renderer* des)
@@ -37,42 +38,110 @@ void MainObject::HandleInputAction(SDL_Event event, SDL_Renderer* screen)
 {
     if(event.type == SDL_KEYDOWN){
         switch(event.key.keysym.sym){
-        case SDLK_RIGHT:
+        case SDLK_d:
             status = WALK_RIGHT;
             input_type.right = 1;
             input_type.left = 0;
             break;
-        case SDLK_LEFT:
+        case SDLK_a:
             status = WALK_LEFT;
             input_type.left = 1;
             input_type.right = 0;
             break;
-        case SDLK_DOWN:
+        case SDLK_s:
             status = WALK_DOWN;
             input_type.down = 1;
             input_type.up = 0;
             break;
-        case SDLK_UP:
+        case SDLK_w:
             status = WALK_UP;
             input_type.up = 1;
             input_type.down = 0;
             break;
+        /*case SDLK_p:
+            BulletObject* p_bullet = new BulletObject();
+            p_bullet->LoadImg("img/soneBullet2.png", screen);
+            p_bullet->SetRect(this->rect_.x + FRAME - 20, this->rect_.y + FRAME * 0.3);
+            p_bullet->set_x_val(20);
+            p_bullet->set_is_move(true);
+
+            p_bullet_list_.push_back(p_bullet);
+            break;*/
         }
     }
     else if(event.type == SDL_KEYUP){
         switch(event.key.keysym.sym){
-        case SDLK_RIGHT:
+        case SDLK_d:
             input_type.right = 0;
             break;
-        case SDLK_LEFT:
+        case SDLK_a:
             input_type.left = 0;
             break;
-        case SDLK_DOWN:
+        case SDLK_s:
             input_type.down = 0;
             break;
-        case SDLK_UP:
+        case SDLK_w:
             input_type.up = 0;
             break;
+        }
+    }
+
+    else if(event.type == SDL_MOUSEBUTTONDOWN && p_bullet_list_.size() < numOfBullet)
+    {
+        BulletObject* p_bullet = new BulletObject();
+        if(event.button.button == SDL_BUTTON_LEFT){
+            p_bullet->LoadImg("img/soneBullet1.png", screen);
+        }
+        if(event.button.button == SDL_BUTTON_RIGHT){
+            p_bullet->LoadImg("img/soneBullet2.png", screen);
+        }
+            if(status == WALK_DOWN){
+                p_bullet->set_bullet_dir(BulletObject::DIR_DOWN);
+                p_bullet->SetRect(rect_.x, rect_.y + FRAME - 20);
+            }
+            else if(status == WALK_UP){
+                p_bullet->set_bullet_dir(BulletObject::DIR_UP);
+                p_bullet->SetRect(rect_.x, rect_.y - FRAME + 20);
+            }
+            else if(status == WALK_RIGHT){
+                p_bullet->set_bullet_dir(BulletObject::DIR_RIGHT);
+                p_bullet->SetRect(rect_.x + FRAME - 20, rect_.y);
+            }
+            else if(status == WALK_LEFT){
+                p_bullet->set_bullet_dir(BulletObject::DIR_LEFT);
+                p_bullet->SetRect(rect_.x - FRAME + 20, rect_.y);
+            }
+            p_bullet->set_x_val(20);
+            p_bullet->set_y_val(20);
+            p_bullet->set_is_move(true);
+
+            p_bullet_list_.push_back(p_bullet);
+    }
+}
+
+void MainObject::HandleBullet(SDL_Renderer* des)
+{
+    for(int i = 0; i < p_bullet_list_.size(); i++)
+    {
+        //BulletObject* p_bullet = p_bullet_list_.at(i);
+        if(p_bullet_list_[i] != NULL)
+        {
+            if(p_bullet_list_[i]->get_is_move() == true)
+            {
+                //std::cout << p_bullet_list_.size() << std::endl;
+                p_bullet_list_[i]->HandleMove(SCREEN_WIDTH - 10, SCREEN_HEIGHT - 10);
+                p_bullet_list_[i]->Render(des);
+            }
+            else
+            {
+                //std::cout << p_bullet_list_.size() << std::endl;
+                p_bullet_list_.erase(p_bullet_list_.begin() + i);
+                /*if(p_bullet != NULL)
+                {
+                    delete p_bullet;
+                    p_bullet = NULL;
+                }*/
+            }
         }
     }
 }
@@ -134,16 +203,36 @@ void MainObject::CheckToMap(Map& map_data)
     if(x1 >= 0 && x2 < MAX_MAP_X && y1 >= 0 && y2 < MAX_MAP_Y){
         if(x_val > 0)   //main object dang di chuyen ve ben phai
         {
-            if((map_data.tile[y1][x2] >= 2) || (map_data.tile[y2][x2] >= 2)){
-                x_pos = x2 * TILE_SIZE - (FRAME + 1);
-                x_val = 0;
+            int val1 = map_data.tile[y1][x2];
+            int val2 = map_data.tile[y2][x2];
+            if(val1 >= BUFF_BULLET || val2 >= BUFF_BULLET)
+            {
+                map_data.tile[y1][x2] = 1;
+                map_data.tile[y2][x2] = 1;
+                numOfBullet += 3;
+            }
+            else{
+                if((val1 >= 2) || (val2 >= 2)){
+                    x_pos = x2 * TILE_SIZE - (FRAME + 1);
+                    x_val = 0;
+                }
             }
         }
         else if(x_val < 0)   //main object dang di chuyen ve ben phai
         {
-            if((map_data.tile[y1][x1] >= 2) || (map_data.tile[y2][x1] >= 2)){
-                x_pos = (x1 + 1) * TILE_SIZE;
-                x_val = 0;
+            int val1 = map_data.tile[y1][x1];
+            int val2 = map_data.tile[y2][x1];
+            if(val1 >= BUFF_BULLET || val2 >= BUFF_BULLET)
+            {
+                map_data.tile[y1][x1] = 1;
+                map_data.tile[y2][x1] = 1;
+                numOfBullet += 3;
+            }
+            else{
+                if((val1 >= 2) || (val2 >= 2)){
+                    x_pos = (x1 + 1) * TILE_SIZE;
+                    x_val = 0;
+                }
             }
         }
     }
@@ -159,16 +248,36 @@ void MainObject::CheckToMap(Map& map_data)
     if(x1 >= 0 && x2 < MAX_MAP_X && y1 >= 0 && y2 < MAX_MAP_Y){
         if(y_val > 0)   //main object dang di chuyen ve xuong
         {
-            if((map_data.tile[y2][x1] >= 2) || (map_data.tile[y2][x2] >= 2)){
-                y_pos = y2 * TILE_SIZE - (FRAME + 1);
-                y_val = 0;
+            int val1 = map_data.tile[y2][x1];
+            int val2 = map_data.tile[y2][x1];
+            if(val1 >= BUFF_BULLET || val2 >= BUFF_BULLET)
+            {
+                map_data.tile[y2][x1] = 1;
+                map_data.tile[y2][x1] = 1;
+                numOfBullet += 3;
+            }
+            else{
+                if((val1 >= 2) || (val2 >= 2)){
+                    y_pos = y2 * TILE_SIZE - (FRAME + 1);
+                    y_val = 0;
+                }
             }
         }
         else if(y_val < 0)   //main object dang di chuyen ve ben phai
         {
-            if((map_data.tile[y1][x1] >= 2) || (map_data.tile[y1][x2] >= 2)){
-                y_pos = (y1 + 1) * TILE_SIZE;
-                y_val = 0;
+            int val1 = map_data.tile[y1][x1];
+            int val2 = map_data.tile[y1][x2];
+            if(val1 >= BUFF_BULLET || val2 >= BUFF_BULLET)
+            {
+                map_data.tile[y1][x1] = 1;
+                map_data.tile[y1][x2] = 1;
+                numOfBullet += 3;
+            }
+            else{
+                if((val1 >= 2) || (val2 >= 2)){
+                    y_pos = (y1 + 1) * TILE_SIZE;
+                    y_val = 0;
+                }
             }
         }
     }

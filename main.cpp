@@ -35,7 +35,7 @@ bool Init()
 
 bool LoadBackground()
 {
-    bool ret = g_background.LoadImg("img/bg.png", g_screen);
+    bool ret = g_background.LoadImg("img/bg2.png", g_screen);
     return ret;
 }
 
@@ -79,6 +79,7 @@ int main(int argc, char* argv[])
 
         Map map_data = game_map.getMap();
 
+        //player.HandleBullet(g_screen);
         player.SetMapXY(map_data.start_x, map_data.start_y);
         player.DoPlayer(map_data);
         //player.Show(g_screen);
@@ -87,6 +88,8 @@ int main(int argc, char* argv[])
         game_map.DrawMap(g_screen);
 
         player.Show(g_screen);
+        player.HandleBullet(g_screen);
+        std::cout << player.get_bullet_list().size() << std::endl;
         SDL_RenderPresent(g_screen);
 
         int real_imp_time = fps_timer.get_ticks();
