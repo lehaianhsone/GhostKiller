@@ -37,7 +37,7 @@ class MainObject : public BaseObject
             p_bullet_list_ = bullet_list;
         }
         std::vector<BulletObject*> get_bullet_list() const {return p_bullet_list_;}
-        void HandleBullet(SDL_Renderer* des);
+        void HandleBullet(SDL_Renderer* des, Map& map_data);
     private:
         std::vector<BulletObject*> p_bullet_list_;
         int numOfBullet;

@@ -36,6 +36,7 @@ void MainObject::Show(SDL_Renderer* des)
 
 void MainObject::HandleInputAction(SDL_Event event, SDL_Renderer* screen)
 {
+    //std::cout << rect_.y << ' ' << rect_.y << std::endl;
     if(event.type == SDL_KEYDOWN){
         switch(event.key.keysym.sym){
         case SDLK_d:
@@ -58,15 +59,6 @@ void MainObject::HandleInputAction(SDL_Event event, SDL_Renderer* screen)
             input_type.up = 1;
             input_type.down = 0;
             break;
-        /*case SDLK_p:
-            BulletObject* p_bullet = new BulletObject();
-            p_bullet->LoadImg("img/soneBullet2.png", screen);
-            p_bullet->SetRect(this->rect_.x + FRAME - 20, this->rect_.y + FRAME * 0.3);
-            p_bullet->set_x_val(20);
-            p_bullet->set_is_move(true);
-
-            p_bullet_list_.push_back(p_bullet);
-            break;*/
         }
     }
     else if(event.type == SDL_KEYUP){
@@ -85,7 +77,6 @@ void MainObject::HandleInputAction(SDL_Event event, SDL_Renderer* screen)
             break;
         }
     }
-
     else if(event.type == SDL_MOUSEBUTTONDOWN && p_bullet_list_.size() < numOfBullet)
     {
         BulletObject* p_bullet = new BulletObject();
@@ -97,19 +88,23 @@ void MainObject::HandleInputAction(SDL_Event event, SDL_Renderer* screen)
         }
             if(status == WALK_DOWN){
                 p_bullet->set_bullet_dir(BulletObject::DIR_DOWN);
-                p_bullet->SetRect(rect_.x, rect_.y + FRAME - 20);
+                p_bullet->SetRect(rect_.x, rect_.y);
+                p_bullet->set_pos(x_pos, y_pos);
             }
             else if(status == WALK_UP){
                 p_bullet->set_bullet_dir(BulletObject::DIR_UP);
-                p_bullet->SetRect(rect_.x, rect_.y - FRAME + 20);
+                p_bullet->SetRect(rect_.x, rect_.y);
+                p_bullet->set_pos(x_pos, y_pos);
             }
             else if(status == WALK_RIGHT){
                 p_bullet->set_bullet_dir(BulletObject::DIR_RIGHT);
-                p_bullet->SetRect(rect_.x + FRAME - 20, rect_.y);
+                p_bullet->SetRect(rect_.x, rect_.y);
+                p_bullet->set_pos(x_pos, y_pos);
             }
             else if(status == WALK_LEFT){
                 p_bullet->set_bullet_dir(BulletObject::DIR_LEFT);
-                p_bullet->SetRect(rect_.x - FRAME + 20, rect_.y);
+                p_bullet->SetRect(rect_.x, rect_.y);
+                p_bullet->set_pos(x_pos, y_pos);
             }
             p_bullet->set_x_val(20);
             p_bullet->set_y_val(20);
@@ -119,7 +114,7 @@ void MainObject::HandleInputAction(SDL_Event event, SDL_Renderer* screen)
     }
 }
 
-void MainObject::HandleBullet(SDL_Renderer* des)
+void MainObject::HandleBullet(SDL_Renderer* des, Map& map_data)
 {
     for(int i = 0; i < p_bullet_list_.size(); i++)
     {
@@ -129,8 +124,8 @@ void MainObject::HandleBullet(SDL_Renderer* des)
             if(p_bullet_list_[i]->get_is_move() == true)
             {
                 //std::cout << p_bullet_list_.size() << std::endl;
-                p_bullet_list_[i]->HandleMove(SCREEN_WIDTH - 10, SCREEN_HEIGHT - 10);
-                p_bullet_list_[i]->Render(des);
+                p_bullet_list_[i]->HandleMove(SCREEN_WIDTH - 10, SCREEN_HEIGHT - 10, map_data);
+                p_bullet_list_[i]->Show(des, map_x, map_y);
             }
             else
             {
@@ -249,7 +244,7 @@ void MainObject::CheckToMap(Map& map_data)
         if(y_val > 0)   //main object dang di chuyen ve xuong
         {
             int val1 = map_data.tile[y2][x1];
-            int val2 = map_data.tile[y2][x1];
+            int val2 = map_data.tile[y2][x2];
             if(val1 >= BUFF_BULLET || val2 >= BUFF_BULLET)
             {
                 map_data.tile[y2][x1] = 1;

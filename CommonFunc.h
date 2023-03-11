@@ -29,7 +29,7 @@ const int RENDER_DRAW_COLOR = 255;
 #define TILE_SIZE 64
 #define MAX_MAP_X 20
 #define MAX_MAP_Y 20
-#define BUFF_BULLET 11
+#define BUFF_BULLET 17
 
 struct Map
 {

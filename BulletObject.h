@@ -4,6 +4,8 @@
 #include "CommonFunc.h"
 #include "BaseObject.h"
 
+#define FRAME 50
+
 class BulletObject : public BaseObject
 {
     public:
@@ -18,10 +20,14 @@ class BulletObject : public BaseObject
             DIR_LEFT = 23,
         };
 
-        void set_x_val(const int& xVal) {x_val_ = xVal;}
-        void set_y_val(const int& yVal) {y_val_ = yVal;}
-        int get_x_val() const {return x_val_;}
-        int get_y_val() const {return y_val_;}
+        void set_x_val(const int& xVal) {x_val = xVal;}
+        void set_y_val(const int& yVal) {y_val = yVal;}
+        void set_pos(const int& xPos, const int& yPos) {x_pos = xPos; y_pos = yPos;}
+
+        int get_x_val() const {return x_val;}
+        int get_y_val() const {return y_val;}
+        int get_x_pos() const {return x_pos;}
+        int get_y_pos() const {return y_pos;}
 
         void set_is_move(const bool& isMove) {is_move_ = isMove;}
         bool get_is_move() const {return is_move_;}
@@ -29,10 +35,13 @@ class BulletObject : public BaseObject
         void set_bullet_dir(const unsigned int& bulletDir) {bullet_dir_ = bulletDir;}
         int get_bullet_dir() const {return bullet_dir_;}
 
-        void HandleMove(const int& x_border, const int& y_border);
+        void HandleMove(const int& x_border, const int& y_border, Map& map_data);
+        void Show(SDL_Renderer* des, int x, int y);
     private:
-        int x_val_;
-        int y_val_;
+        int x_pos;
+        int y_pos;
+        int x_val;
+        int y_val;
         bool is_move_;
         unsigned int bullet_dir_;
 };

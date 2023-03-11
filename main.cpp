@@ -88,8 +88,8 @@ int main(int argc, char* argv[])
         game_map.DrawMap(g_screen);
 
         player.Show(g_screen);
-        player.HandleBullet(g_screen);
-        std::cout << player.get_bullet_list().size() << std::endl;
+        player.HandleBullet(g_screen, map_data);
+
         SDL_RenderPresent(g_screen);
 
         int real_imp_time = fps_timer.get_ticks();
