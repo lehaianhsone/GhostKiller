@@ -9,6 +9,7 @@ MainObject::MainObject()
     input_type.down = input_type.up = 0;
     map_x = map_y = 0;
     numOfBullet = 3;
+    isAlive = true;
 }
 
 void MainObject::Show(SDL_Renderer* des)
@@ -86,28 +87,28 @@ void MainObject::HandleInputAction(SDL_Event event, SDL_Renderer* screen)
         if(event.button.button == SDL_BUTTON_RIGHT){
             p_bullet->LoadImg("img/soneBullet2.png", screen);
         }
-            if(status == WALK_DOWN){
-                p_bullet->set_bullet_dir(BulletObject::DIR_DOWN);
-                p_bullet->SetRect(rect_.x, rect_.y);
-                p_bullet->set_pos(x_pos, y_pos);
-            }
-            else if(status == WALK_UP){
+            if(status == WALK_UP){
                 p_bullet->set_bullet_dir(BulletObject::DIR_UP);
-                p_bullet->SetRect(rect_.x, rect_.y);
-                p_bullet->set_pos(x_pos, y_pos);
+                p_bullet->set_y_val(-20);
+                p_bullet->set_x_val(0);
             }
             else if(status == WALK_RIGHT){
                 p_bullet->set_bullet_dir(BulletObject::DIR_RIGHT);
-                p_bullet->SetRect(rect_.x, rect_.y);
-                p_bullet->set_pos(x_pos, y_pos);
+                p_bullet->set_x_val(20);
+                p_bullet->set_y_val(0);
             }
             else if(status == WALK_LEFT){
                 p_bullet->set_bullet_dir(BulletObject::DIR_LEFT);
-                p_bullet->SetRect(rect_.x, rect_.y);
-                p_bullet->set_pos(x_pos, y_pos);
+                p_bullet->set_x_val(-20);
+                p_bullet->set_y_val(0);
             }
-            p_bullet->set_x_val(20);
-            p_bullet->set_y_val(20);
+            else{
+                p_bullet->set_bullet_dir(BulletObject::DIR_DOWN);
+                p_bullet->set_y_val(20);
+                p_bullet->set_x_val(0);
+            }
+            p_bullet->SetRect(rect_.x, rect_.y);
+            p_bullet->set_pos(x_pos, y_pos);
             p_bullet->set_is_move(true);
 
             p_bullet_list_.push_back(p_bullet);

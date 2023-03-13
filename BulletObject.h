@@ -4,7 +4,7 @@
 #include "CommonFunc.h"
 #include "BaseObject.h"
 
-#define FRAME 50
+#define FRAME 64
 
 class BulletObject : public BaseObject
 {

@@ -3,6 +3,7 @@
 #include "MainObject.h"
 #include "GameMap.h"
 #include "ImpTime.h"
+#include "ThreatObject.h"
 
 BaseObject g_background;
 
@@ -62,9 +63,16 @@ int main(int argc, char* argv[])
 
     MainObject player;
 
+    std::vector<ThreatObject*> ghosts;
+    int createGhost = 0;
+
+    bool isWin = false;
+    //int fire = 0, water = 0, earth = 0, air = 0;
     bool is_quit = false;
-    while(!is_quit)
+
+    while(!is_quit && !isWin)
     {
+        createGhost++;
         while(SDL_PollEvent(&g_event) != 0)
         {
             if(g_event.type == SDL_QUIT){
@@ -79,16 +87,41 @@ int main(int argc, char* argv[])
 
         Map map_data = game_map.getMap();
 
-        //player.HandleBullet(g_screen);
+        if(!player.get_is_alive()) is_quit = true;
+
         player.SetMapXY(map_data.start_x, map_data.start_y);
         player.DoPlayer(map_data);
-        //player.Show(g_screen);
 
         game_map.SetMap(map_data);
         game_map.DrawMap(g_screen);
 
         player.Show(g_screen);
         player.HandleBullet(g_screen, map_data);
+
+
+        if(createGhost % 20 == 0 && ghosts.size() < 20){
+            createGhost = 0;
+            ThreatObject* ghost = new ThreatObject();
+            //ghost->SetMapXY(map_data.start_x, map_data.start_y);
+            ghosts.push_back(ghost);
+            //delete ghost;
+            ghost = NULL;
+        }
+
+        for(int i = 0; i < ghosts.size(); i++){
+            if(!ghosts[i]->is_alive()){
+                ghosts.erase(ghosts.begin() + i);
+            }
+        }
+        for(int i = 0; i < ghosts.size(); i++){
+            if(ghosts[i]->is_alive()){
+                ghosts[i]->SetMapXY(map_data.start_x, map_data.start_y);
+                ghosts[i]->DoPlayer(map_data, player);
+                ghosts[i]->Show(g_screen);
+            }
+        }
+
+        if(water * fire * earth * air != 0) isWin = true;
 
         SDL_RenderPresent(g_screen);
 
@@ -102,3 +135,4 @@ int main(int argc, char* argv[])
     close();
     return 0;
 }
+//ssssssssssaa

@@ -7,7 +7,7 @@
 #include "BulletObject.h"
 
 #define PLAYER_SPEED 10
-#define FRAME 50 //kick co player nxn
+#define FRAME 64
 
 class MainObject : public BaseObject
 {
@@ -38,6 +38,8 @@ class MainObject : public BaseObject
         }
         std::vector<BulletObject*> get_bullet_list() const {return p_bullet_list_;}
         void HandleBullet(SDL_Renderer* des, Map& map_data);
+        bool get_is_alive() const {return isAlive;}
+        void set_is_alive(bool x) {isAlive = x;}
     private:
         std::vector<BulletObject*> p_bullet_list_;
         int numOfBullet;
@@ -52,6 +54,8 @@ class MainObject : public BaseObject
 
         int map_x;
         int map_y;
+
+        bool isAlive;
 
 };
 
